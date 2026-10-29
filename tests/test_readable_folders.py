@@ -5,6 +5,13 @@ from coverly.db import Album, FilesystemFile
 from coverly.storage import folder_for,within
 
 
+def test_path_validation_retains_requested_capitalization(tmp_path):
+    (tmp_path/'Composer').mkdir()
+    destination=within(tmp_path,'COMPOSER')
+    assert destination.name=='COMPOSER'
+    assert within(tmp_path,'Composer').is_dir()
+
+
 def imported(client,raw,title='Yaaro Ezhuthiya Kavithai',year=''):
     response=client.post('/api/import',data={'title':title,'artist':'Composer','year':year},files={'files':('Front.jpg',raw,'image/jpeg')})
     response.raise_for_status()

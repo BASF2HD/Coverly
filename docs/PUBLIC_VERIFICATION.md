@@ -1,6 +1,6 @@
 # Release verification
 
-The release preparation passed **235 local automated tests**, with two environment-dependent skips. A focused set of checksum-publication tests also passed.
+The release preparation passed **236 local automated tests**, with two environment-dependent skips. A focused set of checksum-publication tests also passed.
 
 Tests use disposable archives and controlled source fixtures. They cover:
 

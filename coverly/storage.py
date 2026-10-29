@@ -32,10 +32,16 @@ def within(root: Path, relative: str) -> Path:
     p = PurePosixPath(relative)
     if w.drive or w.root or p.is_absolute() or "\\" in relative or any(x in {"..", "."} for x in p.parts):
         raise ValueError("Unsafe archive path")
-    result = (root / relative).resolve()
-    if not result.is_relative_to(root.resolve()) or result == root.resolve():
+    base = root.resolve()
+    candidate = base / relative
+    result = candidate.resolve()
+    if not result.is_relative_to(base) or result == base:
         raise ValueError("Path escapes archive")
-    return result
+    # Validate the resolved destination, but retain the requested spelling.
+    # Windows resolve() substitutes existing on-disk capitalization, which
+    # otherwise turns an explicitly approved case-only rename into a no-op.
+    # Keeping the lexical leaf also lets callers detect/reject symlinks.
+    return candidate
 
 
 def atomic_write(path: Path, data: bytes, exclusive=False):

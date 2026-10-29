@@ -4,6 +4,7 @@ import json
 import sqlite3
 import tempfile
 import zipfile
+from contextlib import closing
 from pathlib import Path
 from .storage import within, safe_name
 
@@ -13,9 +14,9 @@ def make_backup(root: Path, destination: Path):
     destination.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="coverly-backup-") as tmp:
         snapshot = Path(tmp) / "coverly.sqlite3"
-        with sqlite3.connect(root / "coverly.sqlite3") as src, sqlite3.connect(snapshot) as dst:
+        with closing(sqlite3.connect(root / "coverly.sqlite3")) as src, closing(sqlite3.connect(snapshot)) as dst:
             src.backup(dst)
-        with sqlite3.connect(snapshot) as db:
+        with closing(sqlite3.connect(snapshot)) as db:
             relative_files = {p for row in db.execute("SELECT original, derivative, thumbnail FROM images") for p in row}
             relative_files.update(p for row in db.execute("SELECT path, input_path FROM restorations") for p in row if p)
             relative_files.update(p for (p,) in db.execute("SELECT cover_path FROM album_images") if p)
@@ -68,6 +69,6 @@ def restore_backup(archive: Path, destination: Path):
                 with z.open(info) as src, path.open("xb") as dst:
                     import shutil
                     shutil.copyfileobj(src, dst, length=1024 * 1024)
-    with sqlite3.connect(destination / "coverly.sqlite3") as db:
+    with closing(sqlite3.connect(destination / "coverly.sqlite3")) as db:
         if db.execute("PRAGMA integrity_check").fetchone()[0] != "ok" or db.execute("PRAGMA foreign_key_check").fetchall():
             raise ValueError("Backup database failed integrity validation")
