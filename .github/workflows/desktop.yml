@@ -20,10 +20,8 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -e ".[test,browser]"
       - run: python -m playwright install --with-deps chromium
-      - name: Use Ubuntu's installed Chrome sandbox helper
-        run: |
-          test -u /opt/google/chrome/chrome-sandbox
-          echo 'CHROME_DEVEL_SANDBOX=/opt/google/chrome/chrome-sandbox' >> "$GITHUB_ENV"
+      - name: Configure sandboxed Chromium on Ubuntu
+        run: python scripts/ci_browser_sandbox.py
       - run: python -m pytest -q
   package:
     strategy:

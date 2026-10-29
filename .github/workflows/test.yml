@@ -18,11 +18,9 @@ jobs:
         run: python -m playwright install --with-deps chromium
       - if: runner.os != 'Linux'
         run: python -m playwright install chromium
-      - name: Use Ubuntu's installed Chrome sandbox helper
+      - name: Configure sandboxed Chromium on Ubuntu
         if: runner.os == 'Linux'
-        run: |
-          test -u /opt/google/chrome/chrome-sandbox
-          echo 'CHROME_DEVEL_SANDBOX=/opt/google/chrome/chrome-sandbox' >> "$GITHUB_ENV"
+        run: python scripts/ci_browser_sandbox.py
       - run: python -m pytest -q
   tamil-ocr:
     runs-on: ubuntu-latest
