@@ -27,4 +27,12 @@ Album directories use `Composer/Album name (1982)`. Unknown film years use `(YYY
 
 Requires Python 3.12 or later. Run `setup.command`, then `start.command` on macOS; use `setup.ps1` and `start.ps1` on Windows. Docker is optional. Native packages include Python and do not require it to be installed separately.
 
+## Optional OCR, AI and browser support
+
+Basic CPU restoration is included in every desktop package. For local AI enhancement, complete the source setup above, then run `setup-ai.command` on macOS or `setup-ai.ps1` on Windows. The scripts install the optional Python dependencies and download a checksum-verified Real-ESRGAN model. Restart the source backend; the desktop shell can connect to it at `localhost:8000`. Coverly detects MPS, CUDA or CPU and falls back to CPU if a GPU operation is unsupported. Model availability depends on compatible PyTorch wheels for your operating system and processor.
+
+Tamil OCR needs Tesseract plus `tam` and `eng` language data. On macOS with Homebrew, use `brew install tesseract tesseract-lang`. On Windows, use the installer linked by the [official Tesseract installation guide](https://tesseract-ocr.github.io/tessdoc/Installation.html#windows), include Tamil data, and add the installation directory to PATH. Restart Coverly and check Settings → OCR. Missing OCR data does not disable the archive or restoration tools.
+
+For JavaScript galleries in a source installation, install `.[browser]` with the virtual environment's Python, then run that Python with `-m playwright install chromium`. The [desktop guide](docs/DESKTOP.md) covers packaged-browser support and Linux sandbox setup. The optional [Chrome/Edge bridge](browser-bridge/README.md) supports selected reference-page imports and ChatGPT attachment handoff in your regular browser.
+
 See [the user guide](docs/USER_GUIDE.md), [desktop installation and building](docs/DESKTOP.md), and [verification notes](docs/PUBLIC_VERIFICATION.md). GitHub Actions builds each desktop package on its matching operating system and architecture. Archives, local settings and credentials are excluded from Git and packages.
