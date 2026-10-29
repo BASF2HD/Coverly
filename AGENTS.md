@@ -1,0 +1,11 @@
+# Coverly working preferences
+
+- Keep forms and controls sleek and compact across the entire app.
+- Text-input, select and textarea focus must highlight only the existing border. Do not add external outlines, glows, box shadows or large focus rings.
+- Preserve keyboard-visible focus using a border change; links may use a thin inset outline.
+- Use a small sun/moon icon button for light/dark appearance, without an Appearance label or a native select control. Remember the user's choice in the browser.
+- Preserve artwork originals, archive data and background-job checkpoints when making UI changes.
+- Treat missing archive artwork and folders as intentional user deletions. Do not recover, re-download, recreate, or replace them unless the user explicitly requests restoring those specific files. Metadata removal and composer-name fixes must work without recreating deleted artwork or folders. Test repairs with temporary fixtures, not the live archive.
+- Files manually saved or edited inside any Covers folder are authoritative. Never overwrite, regenerate, replace, delete, move, or reconnect them automatically. While the user is cleaning the archive manually, leave artwork untouched and do not apply composer moves or resume background writers without their instruction.
+- Album folder names use `Album name (film year)`, such as `Pookkal Vidum Thoothu (1983)`, under the composer folder. Never append IDs. The user's latest naming update requires `(YYYY)` when the film year is unknown and readable `_1`, `_2`, etc. suffixes for conflicts, without overwriting files or merging albums. Existing folders are renamed only through an explicit rename preview/apply or a metadata save with the folder-rename option enabled; never run a bulk rename automatically while the user cleans the archive.
+- The user explicitly requested dynamic filesystem discovery. Reading current files and updating SQLite index/path pointers and disposable thumbnail caches is authorized. This never authorizes recreating missing files, changing album.json, moving folders, modifying artwork, resuming paused jobs, or replacing saved music credits with guesses from folder names. Covers and root-level album images are authoritative; deleted Covers must not fall back to old Originals.

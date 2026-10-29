@@ -1,0 +1,18 @@
+{
+  "storage": "archive",
+  "jpg_quality": 95,
+  "request_delay": 1.5,
+  "request_timeout": 25,
+  "max_pages": 1000,
+  "max_depth": 5,
+  "max_image_mb": 40,
+  "ocr_languages": "tam+eng",
+  "high_confidence": 0.85,
+  "worker_concurrency": 2,
+  "discovery_concurrency": 2,
+  "image_domains": [],
+  "naming": "{artist}/{title}{year}--{id}",
+  "search_provider": "site",
+  "search_site": "https://newgramophonehouse.com/",
+  "auto_ocr": true
+}

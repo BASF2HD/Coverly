@@ -1,0 +1,104 @@
+name: Desktop release and download page
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: desktop-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            platform: macos-arm64
+            architecture: arm64
+          - runner: macos-15-intel
+            platform: macos-x64
+            architecture: x64
+          - runner: windows-2022
+            platform: windows-x64
+            architecture: x64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          architecture: ${{ matrix.architecture }}
+      - run: python -m pip install -e ".[test,desktop,build,browser]"
+      - run: python -m playwright install chromium
+      - run: python -m pytest -q
+      - name: Ensure Windows installer compiler
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) {
+            choco install innosetup --yes --no-progress
+            if ($LASTEXITCODE -ne 0) { throw 'Inno Setup installation failed' }
+          }
+      - run: python scripts/build_desktop.py --expected-platform ${{ matrix.platform }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Coverly-${{ matrix.platform }}
+          compression-level: 0
+          path: |
+            dist/Coverly-*.dmg
+            dist/Coverly-*.zip
+            dist/Coverly-*-Setup.exe
+            dist/Coverly-*.sha256
+            dist/Coverly-*-build.json
+            dist/${{ matrix.platform }}/self-test.json
+            dist/${{ matrix.platform }}/backend-self-test.json
+          if-no-files-found: error
+  release:
+    needs: package
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: Coverly-*
+          path: dist
+          merge-multiple: true
+      - name: Publish verified desktop release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/publish_release.py
+  pages:
+    needs: release
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: python scripts/build_site.py
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: output/site
+      - uses: actions/deploy-pages@v5
+        id: deployment

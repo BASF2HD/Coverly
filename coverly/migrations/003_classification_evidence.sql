@@ -1,0 +1,1 @@
+ALTER TABLE album_images ADD COLUMN evidence TEXT NOT NULL DEFAULT '';

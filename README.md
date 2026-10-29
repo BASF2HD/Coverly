@@ -7,7 +7,7 @@ A local Tamil film artwork archive for macOS and Windows. Collect vinyl sleeves 
 - [Latest desktop release](https://github.com/BASF2HD/Coverly/releases/latest)
 - [Download page and platform guide](https://basf2hd.github.io/Coverly/)
 
-The first release is being prepared with separate Apple Silicon and Intel Mac DMGs, a Windows Setup installer, and a Windows Portable ZIP. Downloads appear after the native build and verification jobs finish.
+Downloads are built as separate Apple Silicon and Intel Mac DMGs, a Windows Setup installer, and a Windows Portable ZIP. Downloads appear after the native build and verification jobs finish.
 
 ## Your archive stays yours
 
@@ -18,7 +18,7 @@ Album directories use `Composer/Album name (1982)`. Unknown film years use `(YYY
 ## Features
 
 - Scoped catalogue discovery and resumable artwork downloads with progress.
-- Film-year and soundtrack metadata review, browser-page imports, and Tamil OCR with optional Tesseract.
+- Film-year and soundtrack review, all-pages bulk metadata import, browser-page imports, and Tamil OCR with optional Tesseract.
 - Front/back/disc classification, similar-artwork comparison, and reversible removal.
 - Local restoration, optional AI enhancement, ChatGPT handoff, and square JPEG export under 500 KB.
 - Compact dark and light themes, portable relative archive paths, and local access at `http://localhost:8000`.
@@ -27,4 +27,4 @@ Album directories use `Composer/Album name (1982)`. Unknown film years use `(YYY
 
 Requires Python 3.12 or later. Run `setup.command`, then `start.command` on macOS; use `setup.ps1` and `start.ps1` on Windows. Docker is optional. Native packages include Python and do not require it to be installed separately.
 
-See [the user guide](docs/USER_GUIDE.md), [desktop installation and building](docs/DESKTOP.md), and [verification notes](docs/DESKTOP_VERIFICATION.md). GitHub Actions builds each desktop package on its matching operating system and architecture. Archives, local settings and credentials are excluded from Git and packages.
+See [the user guide](docs/USER_GUIDE.md), [desktop installation and building](docs/DESKTOP.md), and [verification notes](docs/PUBLIC_VERIFICATION.md). GitHub Actions builds each desktop package on its matching operating system and architecture. Archives, local settings and credentials are excluded from Git and packages.
