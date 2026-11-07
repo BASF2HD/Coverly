@@ -5,6 +5,12 @@
     "docs/RELEASE_NOTES.md",
     "docs/USER_GUIDE.md"
   ],
+  "images": [
+    "docs/screenshots/overview.png",
+    "docs/screenshots/library-dark.png",
+    "docs/screenshots/library-light.png",
+    "docs/screenshots/restoration.png"
+  ],
   "exclude_roots": ["archive", "output", "dist", "build", "models", ".venv"],
   "exclude_names": ["config.json", ".env"]
 }

@@ -1,4 +1,4 @@
-"""Prepare a text-only public snapshot without private development reports or archives."""
+"""Prepare a curated public snapshot without private development reports or archives."""
 import argparse
 import hashlib
 import json
@@ -20,18 +20,27 @@ def manifest(root=ROOT):
         path = Path(name)
         if path.parts[0] in policy['exclude_roots'] or path.name in policy['exclude_names']:
             continue
-        if path.parts[0] == 'docs' and name not in policy['documentation']:
+        allowed_image = name in policy.get('images', [])
+        if path.parts[0] == 'docs' and name not in policy['documentation'] and not allowed_image:
             continue
         mode = metadata.split()[0]
         if mode not in {'100644', '100755'}:
             raise ValueError('Only regular source files can be published: ' + name)
         raw = (root / path).read_bytes()
-        value = raw.decode('utf-8')
+        if allowed_image:
+            from PIL import Image
+            with Image.open(root / path) as image:
+                if image.format != 'PNG' or len(raw)>2_000_000:
+                    raise ValueError('Expected a reviewed, compact PNG screenshot: '+name)
+                image.verify()
+            value = ''
+        else:
+            value = raw.decode('utf-8')
         if path.suffix == '.html' and name.startswith('tests/fixtures/'):
             if len(raw) > 20000 or re.search(r'nonce|client_secret|payment|googletagmanager|google-analytics', value, re.I):
                 raise ValueError('Replace captured fixture payload with a synthetic contract: ' + name)
         sha = hashlib.sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw).hexdigest()
-        result.append({'path': name, 'mode': mode, 'sha': sha, 'bytes': len(raw), 'encoding': 'utf-8'})
+        result.append({'path': name, 'mode': mode, 'sha': sha, 'bytes': len(raw), 'encoding': 'base64' if allowed_image else 'utf-8'})
     return result
 
 

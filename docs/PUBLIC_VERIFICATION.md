@@ -1,6 +1,6 @@
 # Release verification
 
-The release preparation passed **236 local automated tests**, with two environment-dependent skips. A focused set of checksum-publication tests also passed.
+The latest release preparation passed **238 local automated tests**, with one optional OCR skip. A focused set of checksum-publication tests also passed. The native Windows checks additionally exercise startup without console streams.
 
 Tests use disposable archives and controlled source fixtures. They cover:
 

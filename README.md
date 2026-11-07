@@ -2,6 +2,25 @@
 
 A local Tamil film artwork archive for macOS and Windows. Collect vinyl sleeves and disc scans, review film music credits, compare similar artwork, and prepare restored square JPEGs for music tags.
 
+![Coverly album library in dark mode, with artwork previews, search and review controls](docs/screenshots/library-dark.png)
+
+## A look inside Coverly
+
+Browse your collection, review its music credits, and prepare artwork for your music library. Both light and dark themes are included.
+
+| Your archive at a glance | A lighter workspace |
+| --- | --- |
+| [![Coverly overview with collection statistics and recently added artwork](docs/screenshots/overview.png)](docs/screenshots/overview.png) | [![Coverly album library in light mode](docs/screenshots/library-light.png)](docs/screenshots/library-light.png) |
+
+<details>
+<summary><strong>See the restoration workspace</strong> — select, process, compare and approve</summary>
+
+![Coverly restoration studio showing artwork selection, local processing controls and before/after comparison](docs/screenshots/restoration.png)
+
+</details>
+
+*Screenshots show the real application using an isolated demo archive and illustrative artwork. Click an image to view it at full size.*
+
 ## Downloads
 
 - [Latest desktop release](https://github.com/BASF2HD/Coverly/releases/latest)
