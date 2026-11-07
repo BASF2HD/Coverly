@@ -111,8 +111,11 @@ def build():
         subprocess.run(['codesign','--force','--sign','-',str(bundle)],check=True)
     executable = output / ('Coverly.app/Contents/MacOS/Coverly' if system == 'Darwin' else 'Coverly/Coverly.exe')
     report = output / 'self-test.json'
-    subprocess.run([str(executable), '--self-test-report', str(report)], cwd=ROOT, check=True, timeout=120)
-    subprocess.run([str(executable), '--backend-self-test-report', str(output / 'backend-self-test.json')], cwd=ROOT, check=True, timeout=180)
+    for flag,target,timeout in [('--self-test-report',report,120),
+                                ('--backend-self-test-report',output/'backend-self-test.json',180)]:
+        checked=subprocess.run([str(executable),flag,str(target)],cwd=ROOT,timeout=timeout)
+        if checked.returncode or not target.is_file() or not json.loads(target.read_text('utf-8')).get('ok'):
+            raise RuntimeError('Native package check failed: '+(target.read_text('utf-8') if target.is_file() else flag+' produced no report'))
     result = json.loads(report.read_text('utf-8'))
     if not result.get('ok'):
         raise RuntimeError('Frozen application self-test failed')

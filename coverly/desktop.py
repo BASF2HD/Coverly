@@ -64,6 +64,7 @@ def select_storage(home, storage):
 
 def _backend(stop, port=8000):
     log = desktop_home() / 'desktop-server.log'
+    os.environ['COVERLY_BACKEND_LOG'] = str(log)
     # Frozen windowed applications have no console streams. Give the backend
     # and its spawn children real inherited descriptors for diagnostics.
     with log.open('a', buffering=1, encoding='utf-8') as stream:
@@ -309,15 +310,19 @@ def main():
     parser.add_argument('--gui-self-test-report', type=Path)
     args = parser.parse_args()
     home = desktop_home()
-    if args.self_test_report:
-        self_test(args.self_test_report)
-        return
-    if args.backend_self_test_report:
-        backend_self_test(args.backend_self_test_report)
-        return
-    if args.gui_self_test_report:
-        gui_self_test(args.gui_self_test_report)
-        return
+    for report, check in [(args.self_test_report,self_test),
+                          (args.backend_self_test_report,backend_self_test),
+                          (args.gui_self_test_report,gui_self_test)]:
+        if report:
+            try:
+                check(report)
+            except Exception:
+                import traceback
+                report.write_text(json.dumps({'ok':False,'error':traceback.format_exc()},indent=2),encoding='utf-8')
+                # Report a normal nonzero exit rather than leaving a frozen
+                # windowed exception dialog waiting for input on a CI runner.
+                raise SystemExit(1)
+            return
     home.mkdir(parents=True, exist_ok=True)
     os.environ['COVERLY_HOME'] = str(home)
     # Finder and Windows shortcuts often start with a minimal PATH.

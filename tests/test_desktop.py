@@ -6,6 +6,25 @@ import pytest
 from coverly.desktop import desktop_home, select_storage, DesktopSession, WelcomeBridge
 
 
+def test_windowed_spawn_streams_support_server_logging(tmp_path,monkeypatch):
+    import sys
+    from coverly.bootstrap import prepare_streams
+    from uvicorn.logging import DefaultFormatter
+    log=tmp_path/'backend.log'
+    monkeypatch.setenv('COVERLY_BACKEND_LOG',str(log))
+    with monkeypatch.context() as scoped:
+        scoped.setattr(sys,'stdout',None);scoped.setattr(sys,'stderr',None)
+        prepare_streams()
+        stream=sys.stdout
+        try:
+            DefaultFormatter()
+            print('windowed spawn diagnostics',flush=True)
+            assert not stream.isatty()
+        finally:
+            stream.close()
+    assert log.read_text('utf-8')=='windowed spawn diagnostics\n'
+
+
 @pytest.mark.parametrize('system,expected', [
     ('Darwin', 'Library/Application Support/Coverly'),
     ('Windows', 'AppData/Local/Coverly'),
